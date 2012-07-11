@@ -6,7 +6,7 @@ module Rbfam
       @family, @accession, @from, @to = family, accession, from, to
       
       if options[:sequence]
-        @raw_sequence = options[:sequence]
+        @raw_sequence = (options[:sequence].is_a?(String) ? Bio::Sequence::NA.new(options[:sequence]) : options[:sequence])
       end
       
       if options[:autoload]

@@ -20,8 +20,8 @@ class SequenceTable < ActiveRecord::Base
     inline_rails if defined?(inline_rails)
   end
   
-  def to_rbfam_sequence(family)
-    Rbfam::Sequence.new(family, accession, from, to, sequence: sequence)
+  def to_rbfam_sequence(family = nil)
+    Rbfam::Sequence.new(family || Rbfam::Family.new(family), accession, from, to, sequence: sequence)
   end
 end
 
