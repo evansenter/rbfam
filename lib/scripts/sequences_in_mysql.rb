@@ -6,7 +6,7 @@ class Object; def this; self; end; end
 class SequenceTable < ActiveRecord::Base
   self.table_name = "sequences"
   
-  validates_uniqueness_of :accession, scope: [:seq_from, :seq_to]
+  validates_uniqueness_of :accession, scope: [:sequence, :structure]
   
   def self.connect
     ActiveRecord::Base.establish_connection(config = { adapter: "mysql2", username: "root", reconnect: true })

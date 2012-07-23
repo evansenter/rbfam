@@ -54,7 +54,7 @@ module Rbfam
     def parse_line(line)
       split_line = line.split(/\t/)
       
-      Rbfam::Sequence.new(self, split_line[0], split_line[2].to_i, split_line[3].to_i, autoload: { length: 300, extend: 3 })
+      Rbfam::Sequence.new(self, split_line[0], split_line[2].to_i, split_line[3].to_i, autoload: true)
     end
   end
 end

@@ -24,8 +24,8 @@ module Rbfam
         sequence_length: sequence.length, 
         from:            from, 
         to:              to, 
-        seq_from:        up_coord + coord_window({ length: 300, extend: 3 }).min, 
-        seq_to:          up_coord + coord_window({ length: 300, extend: 3 }).max,
+        seq_from:        up_coord + coord_window(options[:coord_window] || {}).min, 
+        seq_to:          up_coord + coord_window(options[:coord_window] || {}).max,
         seed:            options[:seed]
       })
     end
@@ -66,6 +66,8 @@ module Rbfam
     end
     
     def coord_window(options = {})
+      # Ex: { length: 300, extend: 3 }
+      
       range = 0..(down_coord - up_coord)
       
       if options[:length] && options[:extend]

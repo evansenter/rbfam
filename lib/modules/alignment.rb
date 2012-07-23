@@ -54,7 +54,7 @@ module Rbfam
     def parse_line(line)
       line_match = line.match(LINE_REGEXP)
       
-      Rbfam::Sequence.new(family, line_match[1], line_match[2].to_i, line_match[3].to_i, autoload: { length: 300, extend: 3 })
+      Rbfam::Sequence.new(family, line_match[1], line_match[2].to_i, line_match[3].to_i, autoload: true)
     end
   end
 end
