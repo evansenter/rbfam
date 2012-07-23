@@ -20,6 +20,10 @@ class SequenceTable < ActiveRecord::Base
     inline_rails if defined?(inline_rails)
   end
   
+  def clean_description
+    ("%s %s %s" % [accession, seq_from, seq_to]).gsub(/[^A-Za-z0-9]/, "_")
+  end
+  
   def to_rbfam_sequence(family = nil)
     Rbfam::Sequence.new(family || Rbfam::Family.new(family), accession, from, to, sequence: sequence)
   end
