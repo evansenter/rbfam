@@ -3,6 +3,12 @@ require "entrez"
 module Rbfam
   module Utils
     class << self
+      def simple_rna_sequence(id, from, to)
+        sequence = rna_sequence_from_entrez(id, [from, to].min, 0..((to - from).abs))
+          
+        to < from ? sequence.complement : sequence
+      end
+      
       def rna_sequence_from_entrez(id, position, window, buffer_size = 0)
         na_sequence_from_entrez(id, position, window, buffer_size).rna
       end
