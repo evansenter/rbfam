@@ -1,14 +1,13 @@
 require "bio"
 require "vienna_rna"
+require "entrez"
 require "httparty"
 require "active_support/inflector"
 
+Dir[File.join(File.dirname(__FILE__), "rbfam", "modules", "*.rb")].each { |name| require "rbfam/modules/#{File.basename(name, '.rb')}" }
+
 module Rbfam
-  Dir[File.join(File.dirname(__FILE__), "/modules/*")].each do |file|
-    autoload File.basename(file, ".rb").camelize.to_sym, file
-  end
-  
   def self.script(name)
-    require File.dirname(__FILE__) + "/scripts/#{File.basename(name, '.rb')}.rb"
+    require "rbfam/scripts/#{File.basename(name, '.rb')}"
   end
 end

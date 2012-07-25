@@ -1,5 +1,3 @@
-require "entrez"
-
 module Rbfam
   module Utils
     class << self
