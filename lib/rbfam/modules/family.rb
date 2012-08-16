@@ -3,8 +3,9 @@ module Rbfam
     attr_reader :family_name
     
     class << self
-      def purine; new("RF00167"); end
-      def tpp;    new("RF00059"); end
+      def purine;  new("RF00167"); end
+      def tpp;     new("RF00059"); end
+      def secis_1; new("RF00031"); end
     end
     
     def initialize(family_name)
