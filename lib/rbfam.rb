@@ -4,7 +4,9 @@ require "entrez"
 require "httparty"
 require "active_support/inflector"
 
-Dir[File.join(File.dirname(__FILE__), "rbfam", "modules", "*.rb")].each { |name| require "rbfam/modules/#{File.basename(name, '.rb')}" }
+%W|helpers modules|.each do |folder|
+  Dir[File.join(File.dirname(__FILE__), "rbfam", folder, "*.rb")].each { |name| require "rbfam/#{folder}/#{File.basename(name, '.rb')}" }
+end
 
 module Rbfam
   def self.script(name)

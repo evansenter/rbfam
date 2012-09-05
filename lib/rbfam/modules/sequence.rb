@@ -1,16 +1,20 @@
 module Rbfam
   class Sequence
-    attr_reader :family, :accession, :from, :to
+    attr_reader :family, :accession, :from, :to, :coord_options
 
     def initialize(family, accession, from, to, options = {})
-      @family, @accession, @from, @to = family, accession, from, to
+      @family        = family
+      @accession     = accession
+      @from          = from
+      @to            = to
+      @coord_options = options[:autoload].is_a?(Hash) ? options[:autoload] : {}
       
       if options[:sequence]
-        @raw_sequence = (options[:sequence].is_a?(String) ? Bio::Sequence::NA.new(options[:sequence]) : options[:sequence])
+        @raw_sequence = (options[:sequence].is_a?(String) ? Bio::Sequence::NA.new(options[:sequence]) : options[:sequence]).upcase
       end
       
       if options[:autoload]
-        sequence(options[:autoload].is_a?(Hash) ? options[:autoload] : {})
+        sequence
       end
     end
     
@@ -24,8 +28,8 @@ module Rbfam
         sequence_length: sequence.length, 
         from:            from, 
         to:              to, 
-        seq_from:        up_coord + coord_window(options[:coord_window] || {}).min, 
-        seq_to:          up_coord + coord_window(options[:coord_window] || {}).max,
+        seq_from:        seq_from, 
+        seq_to:          seq_to,
         seed:            options[:seed]
       })
     end
@@ -36,6 +40,14 @@ module Rbfam
 
     def down_coord
       [from, to].max
+    end
+    
+    def seq_from
+      up_coord + coord_window.min
+    end
+    
+    def seq_to
+      up_coord + coord_window.max
     end
     
     def strand
@@ -50,8 +62,8 @@ module Rbfam
       !plus_strand?
     end
 
-    def sequence(options = {})
-      @raw_sequence ||= Rbfam::Utils.rna_sequence_from_entrez(accession, up_coord, coord_window(options))
+    def sequence
+      @raw_sequence ||= Rbfam::Utils.rna_sequence_from_entrez(accession, up_coord, coord_window)
       @raw_sequence   = minus_strand? ? @raw_sequence.complement : @raw_sequence
     end
     
@@ -61,23 +73,27 @@ module Rbfam
       @mfe_structure ||= ViennaRna::Fold.run(seq).structure
     end
     
+    def description
+      ("%s %s %s" % [accession, from, to]).gsub(/\W+/, "_")
+    end
+    
     def fftbor
       @fftbor ||= ViennaRna::Fftbor.run(seq: seq, str: mfe_structure)
     end
     
-    def coord_window(options = {})
-      # Ex: { length: 300, extend: 3 }
+    def coord_window
+      # Options from @coord_options ex: { length: 300, extend: 3 }
       
       range = 0..(down_coord - up_coord)
       
-      if options[:length] && options[:extend]
-        if range.count < options[:length]
-          length_difference = options[:length] - range.count
+      if @coord_options[:length] && @coord_options[:extend]
+        if range.count < @coord_options[:length]
+          length_difference = @coord_options[:length] - range.count
           
-          case [options[:extend], strand]
+          case [@coord_options[:extend], strand]
           when [3, :plus], [5, :minus] then Range.new(range.min, range.max + length_difference)
           when [5, :plus], [3, :minus] then Range.new(range.min - length_difference, range.max)
-          else puts "WARNING: value for :extend key in sequence retreival needs to be one of 5, 3 - found (%s)" % options[:extend]
+          else puts "WARNING: value for :extend key in sequence retreival needs to be one of 5, 3 - found (%s)" % @coord_options[:extend]
           end
         else
           puts "WARNING: %s %d-%d (%s) is length %d, but only %d nt. have been requested. Providing the full sequence anyways." % [
@@ -86,12 +102,16 @@ module Rbfam
             to,
             strand,
             range.count,
-            options[:length]
+            @coord_options[:length]
           ]
         end
       else
         range
       end
+    end
+    
+    def inspect
+      "#<Rbfam::Sequence #{description} #{seq[0, 20] + ('...' if seq.length > 20)}>"
     end
   end
 end

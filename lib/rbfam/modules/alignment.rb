@@ -1,5 +1,7 @@
 module Rbfam
   class Alignment
+    include Rbfam::CommonHelpers
+    
     LINE_REGEXP = /^([\w\.]+)\/(\d+)\-(\d+)\s+([AUGC\.]+)$/
     
     attr_reader :family, :seed
@@ -8,13 +10,15 @@ module Rbfam
       @family = family
     end
     
-    def entries(alignment = :seed)
-      @parsed_entries ||= pull_from_server(alignment).split(/\n/).reject do |line| 
+    def entries(options = {})
+      options = { alignment: :seed, limit: false }.merge(options)
+      
+      @parsed_entries ||= pull_from_server(options[:alignment]).split(/\n/).reject do |line| 
         line =~ /^#/
       end.select do |line| 
         line =~ LINE_REGEXP
-      end.map(&method(:parse_line)).tap do
-        @seed = alignment == :seed
+      end[options[:limit] ? 0...options[:limit] : 0..-1].map(&method(:parse_line)).tap do
+        @seed = options[:alignment] == :seed
       end
     end
     
@@ -23,11 +27,9 @@ module Rbfam
     end
     
     def load_entries!(options = {})
-      Rbfam.script("sequences_in_mysql")
+      options = { extended: false }.merge(options)
       
-      @parsed_entries = SequenceTable.where({ family: family.family_name }.merge(options)).map do |entry|
-        entry.to_rbfam_sequence(family)
-      end
+      @parsed_entries = family.load_entries!(options)
     end
     
     private
@@ -43,7 +45,7 @@ module Rbfam
         puts "RESPONSE: 200 OK"
         party.parsed_response
       else
-        raise RuntimeError.new("HTTParty raised the following error when retrieving family %s: %s %s" % [
+        raise RuntimeError.new("HTTParty raised the following error when retrieving alignment %s: %s %s" % [
           family_name,
           party.response.code,
           party.response.message

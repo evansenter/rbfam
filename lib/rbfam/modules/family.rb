@@ -1,11 +1,17 @@
 module Rbfam
   class Family
+    include Rbfam::CommonHelpers
+    
     attr_reader :family_name
     
     class << self
       def purine;  new("RF00167"); end
       def tpp;     new("RF00059"); end
       def secis_1; new("RF00031"); end
+      def trna;    new("RF00005"); end
+      def let_7;   new("RF00027"); end
+      def snora71; new("RF00056"); end
+      def u7;      new("RF00066"); end
     end
     
     def initialize(family_name)
@@ -16,15 +22,19 @@ module Rbfam
       Rbfam::Alignment.new(self)
     end
     
-    def entries
-      @parsed_entries ||= pull_from_server.split(/\n/).reject { |line| line =~ /^#/ }.map(&method(:parse_line))
+    def entries(options = {})
+      options = { limit: false }.merge(options)
+      
+      @parsed_entries ||= pull_from_server.split(/\n/).reject { |line| line =~ /^#/ }[options[:limit] ? 0...options[:limit] : 0..-1].map(&method(:parse_line))
     end
     
     def load_entries!(options = {})
+      options = { extended: false }.merge(options)
+      
       Rbfam.script("sequences_in_mysql")
       
       @parsed_entries = SequenceTable.where({ family: family_name }.merge(options)).map do |entry|
-        entry.to_rbfam_sequence(self)
+        entry.to_rbfam(self)
       end
     end
     
