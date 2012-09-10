@@ -19,19 +19,23 @@ module Rbfam
     end
     
     def save!(options = {})
-      Rbfam.script("sequences_in_mysql")
+      unless extended?
+        Rbfam.script("sequences_in_mysql")
       
-      SequenceTable.create({ 
-        family:          family.family_name, 
-        accession:       accession, 
-        sequence:        sequence, 
-        sequence_length: sequence.length, 
-        from:            from, 
-        to:              to, 
-        seq_from:        seq_from, 
-        seq_to:          seq_to,
-        seed:            options[:seed]
-      })
+        SequenceTable.create({ 
+          family:          family.family_name, 
+          accession:       accession, 
+          sequence:        sequence, 
+          sequence_length: sequence.length, 
+          from:            from, 
+          to:              to, 
+          seq_from:        seq_from, 
+          seq_to:          seq_to,
+          seed:            options[:seed]
+        })
+      else
+        tap { puts "ERROR: at this time you can not save #{self.class.name}#extend! objects to protect against DB redundancy (and I'm lazy)." }
+      end
     end
     
     def up_coord
@@ -81,29 +85,32 @@ module Rbfam
       @fftbor ||= ViennaRna::Fftbor.run(seq: seq, str: mfe_structure)
     end
     
+    def extend!(coord_options = {})
+      tap do
+        @extended      = true
+        @coord_options = coord_options
+        remove_instance_variable(:@raw_sequence)
+        sequence
+      end
+    end
+    
+    def extended?
+      @extended
+    end
+    
     def coord_window
-      # Options from @coord_options ex: { length: 300, extend: 3 }
-      
+      # Options from coord_options ex: { length: 300, extend: 3 }, or { length: 250, extend: :both }
       range = 0..(down_coord - up_coord)
       
-      if @coord_options[:length] && @coord_options[:extend]
-        if range.count < @coord_options[:length]
-          length_difference = @coord_options[:length] - range.count
-          
-          case [@coord_options[:extend], strand]
-          when [3, :plus], [5, :minus] then Range.new(range.min, range.max + length_difference)
-          when [5, :plus], [3, :minus] then Range.new(range.min - length_difference, range.max)
-          else puts "WARNING: value for :extend key in sequence retreival needs to be one of 5, 3 - found (%s)" % @coord_options[:extend]
-          end
+      if coord_options[:length] && coord_options[:direction]
+        if coord_options[:direction] == :both
+          Range.new(range.min - coord_options[:length], range.max + coord_options[:length])
         else
-          puts "WARNING: %s %d-%d (%s) is length %d, but only %d nt. have been requested. Providing the full sequence anyways." % [
-            accession,
-            from,
-            to,
-            strand,
-            range.count,
-            @coord_options[:length]
-          ]
+          case [coord_options[:direction], strand]
+          when [3, :plus], [5, :minus] then Range.new(range.min, range.max + coord_options[:length])
+          when [5, :plus], [3, :minus] then Range.new(range.min - coord_options[:length], range.max)
+          else puts "WARNING: value for :direction key in sequence retreival needs to be one of 5, 3, :both - found (%s)" % coord_options[:direction].inspect
+          end
         end
       else
         range
