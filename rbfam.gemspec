@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name        = "rbfam"
-  spec.version     = "0.1.0"
+  spec.version     = "0.1.1"
   spec.summary     = "Bindings to Rfam."
   spec.description = "Light wrapper for RFam data in Ruby."
   spec.authors     = ["Evan Senter"]

@@ -13,7 +13,7 @@ module Rbfam
     def entries(options = {})
       options = { alignment: :seed, limit: false }.merge(options)
       
-      @parsed_entries ||= pull_from_server(options[:alignment]).split(/\n/).reject do |line| 
+      @parsed_entries ||= (pull_from_server(options[:alignment]) || "").split(/\n/).reject do |line| 
         line =~ /^#/
       end.select do |line| 
         line =~ LINE_REGEXP

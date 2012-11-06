@@ -5,13 +5,15 @@ module Rbfam
     attr_reader :family_name
     
     class << self
-      def purine;  new("RF00167"); end
-      def tpp;     new("RF00059"); end
-      def secis_1; new("RF00031"); end
-      def trna;    new("RF00005"); end
-      def let_7;   new("RF00027"); end
-      def snora71; new("RF00056"); end
-      def u7;      new("RF00066"); end
+      def purine;       new("RF00167"); end
+      def tpp;          new("RF00059"); end
+      def secis_1;      new("RF00031"); end
+      def trna;         new("RF00005"); end
+      def let_7;        new("RF00027"); end
+      def snora71;      new("RF00056"); end
+      def u7;           new("RF00066"); end
+      def rose;         new("RF00435"); end
+      def hammerhead_3; new("RF00008"); end
     end
     
     def initialize(family_name)
@@ -29,7 +31,7 @@ module Rbfam
     end
     
     def load_entries!(options = {})
-      options = { extended: false }.merge(options)
+      options = { extended: false, seed: true }.merge(options)
       
       Rbfam.script("sequences_in_mysql")
       
