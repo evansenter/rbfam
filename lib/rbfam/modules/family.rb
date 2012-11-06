@@ -5,15 +5,9 @@ module Rbfam
     attr_reader :family_name
     
     class << self
-      def purine;       new("RF00167"); end
-      def tpp;          new("RF00059"); end
-      def secis_1;      new("RF00031"); end
-      def trna;         new("RF00005"); end
-      def let_7;        new("RF00027"); end
-      def snora71;      new("RF00056"); end
-      def u7;           new("RF00066"); end
-      def rose;         new("RF00435"); end
-      def hammerhead_3; new("RF00008"); end
+      def method_missing(name, *args, &block)
+        READABLE[name.to_s] ? new(READABLE[name.to_s]) : super
+      end
     end
     
     def initialize(family_name)

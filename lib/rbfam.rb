@@ -1,3 +1,4 @@
+require "json"
 require "bio"
 require "vienna_rna"
 require "entrez"
@@ -13,3 +14,5 @@ module Rbfam
     require "rbfam/scripts/#{File.basename(name, '.rb')}"
   end
 end
+
+Rbfam::Family.const_set(:READABLE, JSON.parse(File.read(File.join(File.dirname(__FILE__), "rbfam", "helpers", "simple_names.json"))))

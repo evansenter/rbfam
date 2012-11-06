@@ -1,11 +1,11 @@
 Gem::Specification.new do |spec|
   spec.name        = "rbfam"
-  spec.version     = "0.1.1"
+  spec.version     = "0.1.2"
   spec.summary     = "Bindings to Rfam."
   spec.description = "Light wrapper for RFam data in Ruby."
   spec.authors     = ["Evan Senter"]
   spec.email       = "evansenter@gmail.com"
-  spec.files       = Dir["{lib}/**/*.rb", "bin/*", "LICENSE", "*.md"]
+  spec.files       = Dir["{lib}/**/*", "bin/*", "LICENSE", "*.md"]
   spec.homepage    = "http://rubygems.org/gems/rbfam"
   
   spec.add_dependency("bio",        [">= 1.4.2"])
