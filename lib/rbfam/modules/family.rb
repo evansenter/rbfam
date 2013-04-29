@@ -2,7 +2,7 @@ module Rbfam
   class Family
     include Rbfam::CommonHelpers
     
-    attr_reader :family_name
+    attr_reader :family_name, :description
     
     class << self
       def method_missing(name, *args, &block)
@@ -10,8 +10,13 @@ module Rbfam
       end
     end
     
-    def initialize(family_name)
+    def initialize(family_name, description = "")
       @family_name = family_name
+      @description = description
+    end
+    
+    def id
+      ("%s %s" % [family_name, description.downcase]).strip.gsub(/\W+/, "_")
     end
     
     def alignment
