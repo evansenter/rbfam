@@ -1,31 +1,32 @@
+require "bio-stockholm"
+require "active_record"
+require "mysql2"
 require "rbfam"
-require "nokogiri"
 
-Rbfam.script("sequences_in_mysql")
+entries = Bio::Stockholm::Reader.parse_from_file("rfam_11.seed") and nil
 
-doc      = Nokogiri::HTML(File.read("./families_11.0.html"))
-rfam_ids = doc.css("table#browseTable tbody tr td[3] a").map(&:content)
+inline_rails if defined?(inline_rails)
+Rbfam.connect
 
-rfam_ids[689..-1].each do |id|
-  puts id
-  Rbfam::Family.new(id).alignment.entries.each do |entry|
-    hash = entry.instance_eval do
-      { 
-        family:          family.family_name, 
-        accession:       accession, 
-        sequence:        sequence, 
-        sequence_length: sequence.length, 
-        from:            from, 
-        to:              to, 
-        seq_from:        seq_from, 
-        seq_to:          seq_to,
-        seed:            1
-      }
-    end
+class Family < ActiveRecord::Base; has_one :alignment; end
+class Alignment < ActiveRecord::Base; belongs_to :family; end
+class Sequence < ActiveRecord::Base; belongs_to :alignment; end
 
-    SequenceTable.connection.execute(
-      "INSERT INTO sequences (#{hash.keys.map { |i| '`%s`' % i.to_s }.join(', ')}) VALUES (#{hash.values.map(&:inspect).join(', ')})"
-    )
+entries.each do |stockholm|
+  family = Family.find_or_create_by(name: stockholm.gf_features["AC"], description: stockholm.gf_features["DE"])
+  
+  alignment = Alignment.find_or_create_by(family: family) do |alignment|
+    alignment.stockholm           = stockholm.to_yaml
+    alignment.consensus_structure = stockholm.gc_features["SS_cons"].gsub(?<, ?().gsub(?>, ?))
   end
-  puts
-end
+  
+  stockholm.records.reject { |key, _| key == ?# }.each do |identifier, record|
+    accession, from, to = identifier.split(/[\/-]/)
+    
+    Sequence.find_or_create_by(alignment: alignment, accession: accession, from: from, to: to) do |sequence|
+      raw_sequence                = record.sequence.upcase
+      sequence.stripped_sequence  = raw_sequence.gsub(/[^AUGC]/, "")
+      sequence.alignment_sequence = raw_sequence
+    end
+  end
+end and nil

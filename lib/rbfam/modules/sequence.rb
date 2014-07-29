@@ -1,5 +1,5 @@
 module Rbfam
-  class Sequence
+  class Sequence < ActiveRecord::Base
     attr_reader :family, :accession, :from, :to, :coord_options
 
     def initialize(family, accession, from, to, options = {})
@@ -74,7 +74,7 @@ module Rbfam
     alias :seq :sequence
     
     def mfe_structure
-      @mfe_structure ||= ViennaRna::Fold.run(seq).structure
+      @mfe_structure ||= Wrnap::Fold.run(seq).structure
     end
     
     def description
@@ -82,7 +82,7 @@ module Rbfam
     end
     
     def fftbor
-      @fftbor ||= ViennaRna::Fftbor.run(seq: seq, str: mfe_structure)
+      @fftbor ||= Wrnap::Fftbor.run(seq: seq, str: mfe_structure)
     end
     
     def extend!(coord_options = {})
