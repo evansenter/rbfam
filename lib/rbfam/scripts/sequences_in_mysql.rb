@@ -1,5 +1,3 @@
-# SequenceTable(id: integer, family: string, accession: string, sequence: text, sequence_length: integer, from: integer, to: integer, seq_from: integer, seq_to: integer, seed: boolean, created_at: datetime, updated_at: datetime, extended: boolean)
-
 require "mysql2"
 require "active_record"
 
@@ -8,7 +6,7 @@ module Rbfam
     class Sequence < ActiveRecord::Base
       belongs_to :alignment
 
-      validates_uniqueness_of :accession, scope: [:sequence, :seq_from, :seq_to]
+      validates_uniqueness_of :accession, scope: [:stripped_sequence, :from, :to]
 
       def self.connect
         ActiveRecord::Base.establish_connection(config = { adapter: "mysql2", username: "root", reconnect: true })
@@ -24,7 +22,7 @@ module Rbfam
 
       def to_rbfam(family = nil)
         # Should use a singleton pattern here to look up the family.
-        ::Rbfam::Sequence.new(family || Rbfam::Family.new(family), accession, from, to, { sequence: sequence })
+        ::Rbfam::Sequence.new(family || Rbfam::Family.new(family), accession, from, to, { sequence: stripped_sequence })
       end
     end
 
