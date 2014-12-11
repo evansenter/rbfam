@@ -66,23 +66,13 @@ module Rbfam
       !plus_strand?
     end
 
-    def sequence
+    alias_method :seq, def sequence
       @raw_sequence ||= Rbfam::Utils.rna_sequence_from_entrez(accession, up_coord, coord_window)
       @raw_sequence   = minus_strand? ? @raw_sequence.complement : @raw_sequence
     end
     
-    alias :seq :sequence
-    
-    def mfe_structure
-      @mfe_structure ||= Wrnap::Fold.run(seq).structure
-    end
-    
     def description
       ("%s %s %s" % [accession, from, to]).gsub(/\W+/, "_")
-    end
-    
-    def fftbor
-      @fftbor ||= Wrnap::Fftbor.run(seq: seq, str: mfe_structure)
     end
     
     def extend!(coord_options = {})
@@ -109,7 +99,7 @@ module Rbfam
           case [coord_options[:direction], strand]
           when [3, :plus], [5, :minus] then Range.new(range.min, range.max + coord_options[:length])
           when [5, :plus], [3, :minus] then Range.new(range.min - coord_options[:length], range.max)
-          else puts "WARNING: value for :direction key in sequence retreival needs to be one of 5, 3, :both - found (%s)" % coord_options[:direction].inspect
+          else puts "WARNING: value for :direction key in sequence retrieval needs to be one of 5, 3, :both - found (%s)" % coord_options[:direction].inspect
           end
         end
       else

@@ -1,12 +1,12 @@
-require "json"
-require "bio"
-require "wrnap"
-require "entrez"
-require "httparty"
-require "bio-stockholm"
-require "mysql2"
 require "active_record"
 require "active_support/inflector"
+require "bio"
+require "bio-stockholm"
+require "entrez"
+require "httparty"
+require "json"
+require "mysql2"
+require "parallel"
 
 %W|helpers modules|.each do |folder|
   Dir[File.join(File.dirname(__FILE__), "rbfam", folder, "*.rb")].each { |name| require "rbfam/#{folder}/#{File.basename(name, '.rb')}" }

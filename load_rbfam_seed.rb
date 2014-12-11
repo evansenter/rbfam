@@ -1,18 +1,14 @@
-require "bio-stockholm"
-require "active_record"
-require "mysql2"
 require "rbfam"
 
-entries = Bio::Stockholm::Reader.parse_from_file("rfam_11.seed") and nil
+entries = Bio::Stockholm::Reader.parse_from_file("rfam_12.seed.utf8") and nil
 
-inline_rails if defined?(inline_rails)
-Rbfam.connect
+Rbfam.connect(config: { adapter: "mysql2", database: "rbfam", username: "root", password: "" })
 
 class Family < ActiveRecord::Base; has_one :alignment; end
 class Alignment < ActiveRecord::Base; belongs_to :family; end
 class Sequence < ActiveRecord::Base; belongs_to :alignment; end
 
-entries.each do |stockholm|
+Parallel.each(entries, progress: "Populating MySQL") do |stockholm|
   family = Family.find_or_create_by(name: stockholm.gf_features["AC"], description: stockholm.gf_features["DE"])
   
   alignment = Alignment.find_or_create_by(family: family) do |alignment|
