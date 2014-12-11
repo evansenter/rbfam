@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rbfam (0.2.0)
+    rbfam (0.2.1)
       activerecord
       activesupport
       bio (~> 1.4, >= 1.4.2)
