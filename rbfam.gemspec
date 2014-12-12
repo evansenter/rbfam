@@ -20,15 +20,19 @@ Gem::Specification.new do |spec|
   
   spec.required_ruby_version = ">= 2.0"
 
+  spec.add_development_dependency "awesome_print",         "~> 1.2.0"
+  spec.add_development_dependency "bundler",               "~> 1.7"
+  spec.add_development_dependency "gem-release",           "~> 0.7", ">= 0.7.3"
+  spec.add_development_dependency "rake",                  "~> 10.0"
   spec.add_development_dependency "standalone_migrations", "~> 2.1", ">= 2.1.5"
   
   spec.add_runtime_dependency "activerecord"
   spec.add_runtime_dependency "activesupport"
-  spec.add_runtime_dependency "bio",                   "~> 1.4", ">= 1.4.2"
-  spec.add_runtime_dependency "bio-stockholm",         "~> 0.0", ">= 0.0.1"
-  spec.add_runtime_dependency "entrez",                "~> 0.5", ">= 0.5.8.1"
-  spec.add_runtime_dependency "httparty",              "~> 0.8", ">= 0.8.3"
-  spec.add_runtime_dependency "mysql2",                "~> 0.3", ">= 0.3.14"
-  spec.add_runtime_dependency "nokogiri",              "~> 1.6", ">= 1.6.1"
-  spec.add_runtime_dependency "parallel",              "~> 1.3", ">= 1.3.2"
+  spec.add_runtime_dependency "bio",           "~> 1.4", ">= 1.4.2"
+  spec.add_runtime_dependency "bio-stockholm", "~> 0.0", ">= 0.0.1"
+  spec.add_runtime_dependency "entrez",        "~> 0.5", ">= 0.5.8.1"
+  spec.add_runtime_dependency "httparty",      "~> 0.8", ">= 0.8.3"
+  spec.add_runtime_dependency "mysql2",        "~> 0.3", ">= 0.3.14"
+  spec.add_runtime_dependency "nokogiri",      "~> 1.6", ">= 1.6.1"
+  spec.add_runtime_dependency "parallel",      "~> 1.3", ">= 1.3.2"
 end
