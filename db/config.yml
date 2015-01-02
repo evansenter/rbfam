@@ -1,4 +1,4 @@
-development:
+rbfam:
   adapter: mysql2
   database: rbfam
   username: root
