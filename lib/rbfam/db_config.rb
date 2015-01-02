@@ -16,6 +16,12 @@ module Rbfam
       true
     end
     
+    def seed!
+      load_rakefile
+      Rake::Task["db:seed"].invoke
+      true
+    end
+    
     def clear!
       load_rakefile
       Rake::Task["db:drop"].invoke
