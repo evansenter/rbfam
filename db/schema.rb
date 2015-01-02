@@ -9,36 +9,29 @@
 # from scratch. The latter is a flawed and unsustainable approach (the more migrations
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
-# It's strongly recommended to check this file into your version control system.
+# It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140114232810) do
+ActiveRecord::Schema.define(version: 20150102192407) do
 
-  create_table "alignments", :force => true do |t|
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
-    t.integer  "family_id"
-    t.text     "stockholm",           :limit => 2147483647
-    t.text     "consensus_structure"
+  create_table "families", force: :cascade do |t|
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+    t.string   "name",                limit: 255
+    t.string   "description",         limit: 255
+    t.text     "consensus_structure", limit: 65535
   end
 
-  create_table "families", :force => true do |t|
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-    t.string   "name"
-    t.string   "description"
-  end
+  add_index "families", ["name"], name: "index_families_on_name", unique: true, using: :btree
 
-  add_index "families", ["name"], :name => "index_families_on_name", :unique => true
-
-  create_table "sequences", :force => true do |t|
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
-    t.integer  "alignment_id"
-    t.string   "accession"
-    t.text     "stripped_sequence"
-    t.text     "alignment_sequence"
-    t.integer  "from"
-    t.integer  "to"
+  create_table "rnas", force: :cascade do |t|
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.integer  "family_id",       limit: 4
+    t.string   "accession",       limit: 255
+    t.text     "sequence",        limit: 65535
+    t.text     "gapped_sequence", limit: 65535
+    t.integer  "from",            limit: 4
+    t.integer  "to",              limit: 4
   end
 
 end

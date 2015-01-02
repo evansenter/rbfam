@@ -1,3 +1,3 @@
 module Rbfam
-  VERSION = "0.2.2"
+  VERSION = "12.0.0"
 end

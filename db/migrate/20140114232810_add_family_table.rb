@@ -1,7 +1,7 @@
 class AddFamilyTable < ActiveRecord::Migration
   def up
     create_table :families do |table|
-      table.timestamps
+      table.timestamps null: false
       table.string :name
       table.string :description
     end

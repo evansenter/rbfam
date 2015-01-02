@@ -1,7 +1,7 @@
 class AddSequenceTable < ActiveRecord::Migration
   def up
     create_table :sequences do |table|
-      table.timestamps
+      table.timestamps null: false
       table.belongs_to :alignment
       table.string :accession
       table.text :stripped_sequence
