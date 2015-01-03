@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rbfam (12.0.0)
+    rbfam (12.0.1)
       active_record_migrations (~> 4.2, >= 4.2.0.1)
       activerecord (~> 4.2, >= 4.2.0)
       activerecord-import (~> 0.7, >= 0.7.0)
@@ -97,7 +97,7 @@ GEM
     thread_safe (0.3.4)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    virtus (1.0.3)
+    virtus (1.0.4)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
       descendants_tracker (~> 0.0, >= 0.0.3)
@@ -107,8 +107,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  awesome_print (~> 1.2.0)
+  awesome_print (~> 1.2)
   bundler (~> 1.7)
-  gem-release (~> 0.7, >= 0.7.3)
-  rake (~> 10.0)
+  gem-release (~> 0.7)
+  rake (~> 10.4)
   rbfam!

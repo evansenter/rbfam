@@ -20,10 +20,10 @@ Gem::Specification.new do |spec|
   
   spec.required_ruby_version = ">= 2.0"
 
-  spec.add_development_dependency "awesome_print", "~> 1.2.0"
+  spec.add_development_dependency "awesome_print", "~> 1.2"
   spec.add_development_dependency "bundler",       "~> 1.7"
-  spec.add_development_dependency "gem-release",   "~> 0.7", ">= 0.7.3"
-  spec.add_development_dependency "rake",          "~> 10.0"
+  spec.add_development_dependency "gem-release",   "~> 0.7"
+  spec.add_development_dependency "rake",          "~> 10.4"
   
   spec.add_runtime_dependency "activerecord",             "~> 4.2", ">= 4.2.0"
   spec.add_runtime_dependency "activerecord-import",      "~> 0.7", ">= 0.7.0"
