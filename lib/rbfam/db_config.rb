@@ -11,21 +11,21 @@ module Rbfam
     end
   
     def bootstrap!
-      load_rakefile
-      Rake::Task["db:reset"].invoke
-      true
+      ensure_action("Are you sure you'd like to completely rebuild the database? This takes around 10 minutes.") do
+        Rake::Task["db:reset"].invoke
+      end
     end
     
     def seed!
-      load_rakefile
-      Rake::Task["db:seed"].invoke
-      true
+      ensure_action("Are you sure you'd like to re-seed the database? This is faster than bootstrap!, and won't delete data.") do
+        Rake::Task["db:seed"].invoke
+      end
     end
     
     def clear!
-      load_rakefile
-      Rake::Task["db:drop"].invoke
-      true
+      ensure_action("Are you sure you'd like drop the database? This can't be un-done.") do
+        Rake::Task["db:drop"].invoke
+      end
     end
   
     def connect
@@ -33,6 +33,19 @@ module Rbfam
     end
     
     private
+    
+    def ensure_action(string, &block)
+      puts "#{string} (y/n)"
+      response = gets.chomp.downcase
+      if response == ?y
+        load_rakefile
+        yield block
+        true
+      else 
+        puts "Bailing, no changes were made."
+        false
+      end
+    end
     
     def load_rakefile
       Rake.load_rakefile(File.join(File.dirname(__FILE__), "..", "..", "Rakefile"))

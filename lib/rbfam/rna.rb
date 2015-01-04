@@ -6,6 +6,9 @@ module Rbfam
     validates :from, :to, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
     validates :accession, uniqueness: { scope: [:sequence, :from, :to] }
     
+    scope :plus_strand,  ->{ where(arel_table[:to].gt(arel_table[:from])) }
+    scope :minus_strand, ->{ where(arel_table[:to].lt(arel_table[:from])) }
+    
     def strand
       plus_strand? ? :plus : :minus
     end
@@ -34,14 +37,18 @@ module Rbfam
      as_bioseq(read_attribute(:gapped_sequence))
     end
     
+    def description
+      "%s/%s-%s" % [accession, from, to]
+    end
+    
     def _id
-      ("%s %s %s" % [accession, from, to]).gsub(/\W+/, "_")
+      description.gsub(/\W+/, "_")
     end
     
     private
     
     def as_bioseq(string)
-      Bio::Sequence::NA.new(string).upcase
+      Bio::Sequence::NA.new(string)
     end
   end
 end
